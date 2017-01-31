@@ -82,7 +82,7 @@ If DebugOn Then Debug.Print "  Print Settings: " & C.TimeElapsed & " ms"
 ' Freeze the top row and print headers on every page
     ActiveSheet.PageSetup.PrintTitleRows = "$1:$1"
     ' Move the selection to A1 so we freeze the correct area
-    Application.Goto ActiveSheet.Range("A1"), True
+    Application.GoTo ActiveSheet.Range("A1"), True
     ' Everything above the selection will be frozen
     Range("2:2").Select
     With ActiveWindow

@@ -144,7 +144,7 @@ Sub AutoFitWorksheet(Optional skipRow As Boolean, Optional skipCol As Boolean, O
     'ActiveSheet.UsedRange.Columns.AutoFit
     'ActiveSheet.UsedRange.rows.AutoFit
     ' Scroll up and put pointer back in the upper left to be tidy
-    Application.Goto ActiveSheet.Range("A1"), True
+    Application.GoTo ActiveSheet.Range("A1"), True
 
 End Sub
 
@@ -194,8 +194,8 @@ Sub HeaderFormat(ByRef myRng As Range)
         .Font.Bold = True
         .Font.ThemeColor = xlThemeColorDark1
         .Font.TintAndShade = 0
-    ' Maroon background
-        .Interior.Color = 2303331
+    ' Purple background
+        .Interior.Color = RGB(78, 42, 132)
     End With
     ' Autofilter the Header range
     ActiveSheet.AutoFilterMode = False
@@ -339,7 +339,7 @@ If DebugOn Then Debug.Print "  Margins: " & C.TimeElapsed & " ms"
 ' Header/footer setup
     .ScaleWithDocHeaderFooter = True
     .LeftHeader = ""
-    .LeftFooter = "Chicago Booth" & Chr(10) & "Confidential" 'Chr(10) is newline
+    .LeftFooter = "Kellogg School of Management" & Chr(10) & "Confidential" 'Chr(10) is newline
 Application.PrintCommunication = True 'Just in case it was disabled, since Header/Footers with &Variables can get truncated
 Application.PrintCommunication = False
     .CenterHeader = Trim("&F" & Chr(10) & "&A") '&F is the filename; &A is the worksheet tab name
