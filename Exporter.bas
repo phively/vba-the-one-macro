@@ -8,18 +8,24 @@ Public Sub ExportModules()
     Dim szExportPath As String
     Dim szFileName As String
     Dim cmpComponent As VBIDE.VBComponent
+    Dim PATH As String
+    
+    PATH = FolderWithVBAProjectFiles(MyPath:="GitHub\vba-the-one-macro")
 
     ''' The code modules will be exported in a folder named.
     ''' VBAProjectFiles in the Documents folder.
     ''' The code below create this folder if it not exist
     ''' or delete all files in the folder if it exist.
-    If FolderWithVBAProjectFiles = "Error" Then
+    If PATH = "Error" Then
         MsgBox "Export Folder not exist"
         Exit Sub
     End If
     
     On Error Resume Next
-        Kill FolderWithVBAProjectFiles & "\*.*"
+        Kill PATH & "\*.cls"
+        Kill PATH & "\*.bas"
+        Kill PATH & "\*.frm"
+        Kill PATH & "\*.frx"
     On Error GoTo 0
 
     ''' NOTE: This workbook must be open in Excel.
@@ -32,7 +38,7 @@ Public Sub ExportModules()
     Exit Sub
     End If
     
-    szExportPath = FolderWithVBAProjectFiles & "\"
+    szExportPath = PATH & "\"
     
     For Each cmpComponent In wkbSource.VBProject.VBComponents
         
@@ -120,7 +126,7 @@ Public Sub ImportModules()
         If (objFSO.GetExtensionName(objFile.Name) = "cls") Or _
             (objFSO.GetExtensionName(objFile.Name) = "frm") Or _
             (objFSO.GetExtensionName(objFile.Name) = "bas") Then
-            cmpComponents.Import objFile.Path
+            cmpComponents.Import objFile.PATH
         End If
         
     Next objFile
@@ -128,7 +134,7 @@ Public Sub ImportModules()
     MsgBox "Import is ready"
 End Sub
 
-Function FolderWithVBAProjectFiles() As String
+Function FolderWithVBAProjectFiles(MyPath As String) As String
     Dim WshShell As Object
     Dim FSO As Object
     Dim SpecialPath As String
@@ -142,14 +148,14 @@ Function FolderWithVBAProjectFiles() As String
         SpecialPath = SpecialPath & "\"
     End If
     
-    If FSO.FolderExists(SpecialPath & "Git\vba-the-one-macro") = False Then
+    If FSO.FolderExists(SpecialPath & MyPath) = False Then
         On Error Resume Next
-        MkDir SpecialPath & "Git\vba-the-one-macro"
+        MkDir SpecialPath & MyPath
         On Error GoTo 0
     End If
     
-    If FSO.FolderExists(SpecialPath & "Git\vba-the-one-macro") = True Then
-        FolderWithVBAProjectFiles = SpecialPath & "Git\vba-the-one-macro"
+    If FSO.FolderExists(SpecialPath & MyPath) = True Then
+        FolderWithVBAProjectFiles = SpecialPath & MyPath
     Else
         FolderWithVBAProjectFiles = "Error"
     End If

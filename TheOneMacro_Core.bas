@@ -741,4 +741,36 @@ ErrInvRange:
 
 End Sub
 
+Sub GreenSheetFormat()
+
+' Started by Paul Hively on 1/31/2017
+' Automatic ColumnsToTabs for gift officer "Green Sheet" reports
+
+' ************ OK TO EDIT BELOW HERE ************
+' Prospect managers dimension. The higher number on the next line MUST be >= the number of staff members
+    Dim KSMProspectManagers(1 To 20) As String
+' Write something to the entire array
+    Dim i As Long
+    For i = 1 To UBound(KSMProspectManagers)
+        KSMProspectManagers(i) = "NOT_INITIALIZED"
+    Next i
+' Insert the prospect managers into the array
+' ************ PROSPECT MANAGERS -- ADD NAMES BELOW IN SAME FORMAT
+    KSMProspectManagers(1) = "Ms. Erin Varga"
+    KSMProspectManagers(2) = "Ms. Lisa Guynn"
+    KSMProspectManagers(3) = "Ms. Sally Spritz"
+    KSMProspectManagers(4) = "Mrs. Catherine C. Taylor"
+    KSMProspectManagers(5) = "Mr. Adam Kristopher Nordmark"
+    KSMProspectManagers(6) = "Ms. Suzanne K. Schoeneweiss"
+    KSMProspectManagers(7) = "Mr. David S. Decker-Drane"
+    KSMProspectManagers(8) = "Mr. Ryan Heath Jones"
+    KSMProspectManagers(9) = "Ms. Janice Paszczykowski"
+    KSMProspectManagers(10) = "Ms. Maggie T. Cong-Huyen"
+    KSMProspectManagers(11) = "Mr. Jason Scott Keene"
+    KSMProspectManagers(12) = "Ms. Jane Erb"
+    KSMProspectManagers(13) = "Ms. Christine Kuhn Feary"
+
+' ************ DO NOT EDIT BELOW HERE ************
+
+End Sub
 
