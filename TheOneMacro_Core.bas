@@ -108,7 +108,7 @@ End If
   
 End Sub
 
-Sub PrintSettings()
+Sub printSettings()
 
 ' Written by Paul Hively on 1/7/2013; updated 6/3/2013
 ' Sets the default print options used by Biodata & Analytics
@@ -261,7 +261,7 @@ End If
     ' For each specified column
         For Each rngColumn In rngData.Columns
             ' Run the SingleColumnToTab dependent sub for the current column
-            SingleColumnToTab CWS:=CWS, rngData:=rngColumn, outputFormat:=UserForm_ColToTab.combo_OutputFormat, formatOutput:=UserForm_ColToTab.chkbox_RunWebIFormat, parseSeparately:=UserForm_ColToTab.chkbox_parseSeparately.Value, parseBlanks:=UserForm_ColToTab.chkbox_parseBlanks.Value, overwriteWS:=UserForm_ColToTab.chkbox_OverwriteWS
+            SingleColumnToTab CWS:=CWS, rngData:=rngColumn, OutputFormat:=UserForm_ColToTab.combo_OutputFormat, formatOutput:=UserForm_ColToTab.chkbox_RunWebIFormat, parseSeparately:=UserForm_ColToTab.chkbox_parseSeparately.Value, parseBlanks:=UserForm_ColToTab.chkbox_parseBlanks.Value, overwriteWS:=UserForm_ColToTab.chkbox_OverwriteWS
                 'Make the booleans pull from the user form; should default to true and true
         Next rngColumn
 

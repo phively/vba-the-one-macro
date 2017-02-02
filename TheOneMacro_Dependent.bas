@@ -362,7 +362,8 @@ End If
 
 End Sub
 
-Sub SingleColumnToTab(ByRef CWS As Worksheet, rngData As Range, outputFormat As String, formatOutput As Boolean, parseSeparately As Boolean, parseBlanks As Boolean, overwriteWS As Boolean)
+Sub SingleColumnToTab(ByRef CWS As Worksheet, rngData As Range, OutputFormat As String, formatOutput As Boolean, _
+    parseSeparately As Boolean, parseBlanks As Boolean, overwriteWS As Boolean, Optional printSettings As Boolean)
 
 ' Written by Paul Hively on 12/3/2012; Last updated 4/1/2013
 ' Thanks to http://www.ozgrid.com/VBA/item-worksheets.htm for the basic idea
@@ -440,7 +441,7 @@ End If
                 ' Check that we're not overwriting a worksheet that needs to be kept
                     UniqueWSName WSName:=currentWSName, WSToKeep:=WSToKeep
                 ' Do the filtering and copying
-                    SingleColCopySub CWS:=CWS, colNum:=colNum, colAddress:=colAddress, currentItemName:=currentItemName, currentWSName:=currentWSName, outputFormat:=outputFormat, formatOutput:=formatOutput
+                    SingleColCopySub CWS:=CWS, colNum:=colNum, colAddress:=colAddress, currentItemName:=currentItemName, currentWSName:=currentWSName, OutputFormat:=OutputFormat, formatOutput:=formatOutput, printSettings:=printSettings
                 End If
             Next rngCell
         End If
@@ -451,7 +452,7 @@ End If
         ' Check that we're not overwriting a worksheet that needs to be kept
             UniqueWSName WSName:=currentWSName, WSToKeep:=WSToKeep
         ' Do the filtering and copying
-            SingleColCopySub CWS:=CWS, colNum:=colNum, colAddress:=colAddress, currentItemName:="<>", currentWSName:=currentWSName, outputFormat:=outputFormat, formatOutput:=formatOutput
+            SingleColCopySub CWS:=CWS, colNum:=colNum, colAddress:=colAddress, currentItemName:="<>", currentWSName:=currentWSName, OutputFormat:=OutputFormat, formatOutput:=formatOutput
         End If
         ' Display blank cells on separate worksheet, if called for
         If parseBlanks = True Then
@@ -460,7 +461,7 @@ End If
         ' Check that we're not overwriting a worksheet that needs to be kept
             UniqueWSName WSName:=currentWSName, WSToKeep:=WSToKeep
         ' Do the filtering and copying
-            SingleColCopySub CWS:=CWS, colNum:=colNum, colAddress:=colAddress, currentItemName:="", currentWSName:=currentWSName, outputFormat:=outputFormat, formatOutput:=formatOutput
+            SingleColCopySub CWS:=CWS, colNum:=colNum, colAddress:=colAddress, currentItemName:="", currentWSName:=currentWSName, OutputFormat:=OutputFormat, formatOutput:=formatOutput
         End If
     End With
             
@@ -470,19 +471,21 @@ End If
 
 End Sub
 
-Sub SingleColCopySub(ByRef CWS As Worksheet, colNum As Integer, colAddress As String, currentItemName As String, currentWSName As String, outputFormat As String, formatOutput As Boolean)
+Sub SingleColCopySub(ByRef CWS As Worksheet, colNum As Integer, colAddress As String, currentItemName As String, _
+    currentWSName As String, OutputFormat As String, formatOutput As Boolean, Optional printSettings As Boolean)
 
 ' Written by Paul Hively on 3/4/2013; last updated on 4/1/2013
 ' Sub for SingleColumToTab used to actually copy the range of interest to the new tab; split into its own sub for ease of maintenance
 
 Dim WSH As Object
 Dim TempPath As String
+Dim nCols As Long
 
 ' Filter the chosen column in the original dataset for the current value
 CWS.Range(colAddress).AutoFilter colNum, currentItemName
 
 ' If the output format is to separate tabs
-If outputFormat = "T" Then
+If OutputFormat = "T" Then
     ' Recreate a worksheet with the current item's name
     On Error Resume Next
         Worksheets(currentWSName).Delete
@@ -495,7 +498,7 @@ If outputFormat = "T" Then
 End If
 
 ' If the output format is to separate files
-If outputFormat = "F" Then
+If OutputFormat = "F" Then
     ' Create path to the temp folder
     Set WSH = CreateObject("Scripting.FileSystemObject")
     TempPath = WSH.GetSpecialFolder(2) & "\"
@@ -512,6 +515,16 @@ End If
 ' If formatting with the WebI macro, run that sub now
 If formatOutput Then
     WebiFormat
+End If
+
+' Get rid of any phantom extra columns
+LastUsedCol rng:=ActiveSheet.Range("1:1"), col:=nCols
+ActiveSheet.Range(Cells(1, nCols + 1), Cells(1, ActiveSheet.Cells(1, 12).End(xlToRight).Column)).EntireColumn.Delete
+ActiveSheet.UsedRange
+
+' If formatting with PrintSettings, make sure everything fits now
+If printSettings Then
+    PrintSettingsDep
 End If
 
 End Sub
