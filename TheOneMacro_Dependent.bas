@@ -84,7 +84,7 @@ Next row
 
 End Sub
 
-Sub FormatInCell(ByRef RngData As Range, ArraySeek As Variant, Optional isBold As Boolean, Optional isItalic As Boolean, Optional isUnderlined As Boolean, Optional isColor As Boolean, Optional Color As Long)
+Sub FormatInCell(ByRef rngData As Range, ArraySeek As Variant, Optional isBold As Boolean, Optional isItalic As Boolean, Optional isUnderlined As Boolean, Optional isColor As Boolean, Optional Color As Long)
 
 ' Written by Paul Hively on 10/1/2012; Last updated 6/19/2013
 ' Looks through the cell values of the specified range, and formats strings matching anything inside ArraySeek
@@ -97,7 +97,7 @@ Sub FormatInCell(ByRef RngData As Range, ArraySeek As Variant, Optional isBold A
     Dim intFoundText As Integer
     
 ' Iterate to the last value of this column
-    For Each rngColumn In RngData.Columns
+    For Each rngColumn In rngData.Columns
     ' Search through each cell in the range
         For Each rngCell In Range(rngColumn.Cells(1, 1), rngColumn.Cells(rows.count, 1).End(xlUp))
             ' Search through each name in the list
@@ -127,7 +127,7 @@ Sub FormatInCell(ByRef RngData As Range, ArraySeek As Variant, Optional isBold A
     
 ' Move back to the originally selected cells to be extra-tidy
     
-    RngData.Select
+    rngData.Select
     
 End Sub
 
@@ -362,7 +362,7 @@ End If
 
 End Sub
 
-Sub SingleColumnToTab(ByRef CWS As Worksheet, RngData As Range, outputFormat As String, formatOutput As Boolean, parseSeparately As Boolean, parseBlanks As Boolean, overwriteWS As Boolean)
+Sub SingleColumnToTab(ByRef CWS As Worksheet, rngData As Range, outputFormat As String, formatOutput As Boolean, parseSeparately As Boolean, parseBlanks As Boolean, overwriteWS As Boolean)
 
 ' Written by Paul Hively on 12/3/2012; Last updated 4/1/2013
 ' Thanks to http://www.ozgrid.com/VBA/item-worksheets.htm for the basic idea
@@ -400,13 +400,13 @@ End If
     CWS.AutoFilterMode = False
         
 ' Initially set rngData to the entire column to be filtered
-    currentColName = RngData.Range("A1").Value
+    currentColName = rngData.Range("A1").Value
     ' Find column name we will be working with in the active worksheet
     colNum = Cells.Find(currentColName, , xlValues, xlWhole).EntireColumn.SpecialCells(xlCellTypeConstants).Column
     colAddress = CWS.Cells(1, colNum).Address
     
 ' Count rows in rngData
-    rowCount = RngData.rows.count
+    rowCount = rngData.rows.count
 
 ' Recreate the "CurrUniqueList4Macro" worksheet for the current column
     On Error Resume Next
@@ -416,10 +416,10 @@ End If
 
 'Filter the rngData range so only a unique list is created
     With Worksheets("CurrUniqueList4Macro")
-        RngData.AdvancedFilter xlFilterCopy, , _
+        rngData.AdvancedFilter xlFilterCopy, , _
          Worksheets("CurrUniqueList4Macro").Range("A1"), True
         'Set a range variable to the unique list, less the heading.
-        Set RngData = .Range("A2", .Range("A" & rowCount).End(xlUp))
+        Set rngData = .Range("A2", .Range("A" & rowCount).End(xlUp))
     End With
         
 ' AutoFilter the original worksheet for each unique item in the dataset
@@ -427,7 +427,7 @@ End If
         ' Display individual unique values on separate worksheets, if called for
         If parseSeparately = True Then
             ' Go through each unique value from the column
-            For Each rngCell In RngData
+            For Each rngCell In rngData
             ' Skip any blanks if we are not using them
                 If rngCell <> "" Then
                     ' Name of the worksheet to be created
@@ -557,5 +557,6 @@ ReDim Preserve WSToKeep(0 To UBound(WSToKeep) + 1)
 WSToKeep(UBound(WSToKeep)) = WSName
 
 End Sub
+
 
 

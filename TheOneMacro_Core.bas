@@ -224,7 +224,7 @@ DebugOptions
 
 ' Variables
 Dim CWS As Worksheet
-Dim RngData As Range
+Dim rngData As Range
 Dim rngColumn As Range
 Dim Reset As Boolean
 
@@ -245,7 +245,7 @@ Dim Reset As Boolean
     
     ' Define the range to be used
     On Error GoTo ErrInvRange
-        Set RngData = Range(UserForm_ColToTab.refedit_Selector.Value)
+        Set rngData = Range(UserForm_ColToTab.refedit_Selector.Value)
     On Error GoTo 0
     ' Check the output format
     If UserForm_ColToTab.combo_OutputFormat = "Err" Then GoTo ErrNoOutput
@@ -259,9 +259,9 @@ If DebugOn Then
 End If
     
     ' For each specified column
-        For Each rngColumn In RngData.Columns
+        For Each rngColumn In rngData.Columns
             ' Run the SingleColumnToTab dependent sub for the current column
-            SingleColumnToTab CWS:=CWS, RngData:=rngColumn, outputFormat:=UserForm_ColToTab.combo_OutputFormat, formatOutput:=UserForm_ColToTab.chkbox_RunWebIFormat, parseSeparately:=UserForm_ColToTab.chkbox_parseSeparately.Value, parseBlanks:=UserForm_ColToTab.chkbox_parseBlanks.Value, overwriteWS:=UserForm_ColToTab.chkbox_OverwriteWS
+            SingleColumnToTab CWS:=CWS, rngData:=rngColumn, outputFormat:=UserForm_ColToTab.combo_OutputFormat, formatOutput:=UserForm_ColToTab.chkbox_RunWebIFormat, parseSeparately:=UserForm_ColToTab.chkbox_parseSeparately.Value, parseBlanks:=UserForm_ColToTab.chkbox_parseBlanks.Value, overwriteWS:=UserForm_ColToTab.chkbox_OverwriteWS
                 'Make the booleans pull from the user form; should default to true and true
         Next rngColumn
 
@@ -354,7 +354,7 @@ Sub FormatTextInCell()
 DebugOptions
 
 ' Variables
-Dim RngData As Range
+Dim rngData As Range
 UserFormLong = RGB(255, 0, 0) ' Default font color to use
 
 ' Optimize Excel settings to speed up the macro
@@ -371,13 +371,13 @@ UserFormLong = RGB(255, 0, 0) ' Default font color to use
     
     ' Define the range to be used
         On Error GoTo ErrInvRange
-            Set RngData = Range(UserForm_FormatInCell.refedit_Selector.Value)
+            Set rngData = Range(UserForm_FormatInCell.refedit_Selector.Value)
         On Error GoTo 0
     
-    If DebugOn Then Debug.Print " RngData: " & RngData.Address
+    If DebugOn Then Debug.Print " RngData: " & rngData.Address
     
     ' Run Format In Cell
-        FormatInCell RngData:=RngData, ArraySeek:=Array(UserForm_FormatInCell.TextBox_SearchString.Value), isBold:=UserForm_FormatInCell.ToggleButton_Bold.Value, isItalic:=UserForm_FormatInCell.ToggleButton_Italic.Value, isUnderlined:=UserForm_FormatInCell.ToggleButton_Underline, isColor:=True, Color:=UserFormLong
+        FormatInCell rngData:=rngData, ArraySeek:=Array(UserForm_FormatInCell.TextBox_SearchString.Value), isBold:=UserForm_FormatInCell.ToggleButton_Bold.Value, isItalic:=UserForm_FormatInCell.ToggleButton_Italic.Value, isUnderlined:=UserForm_FormatInCell.ToggleButton_Underline, isColor:=True, Color:=UserFormLong
     End If
 
     Unload UserForm_FormatInCell

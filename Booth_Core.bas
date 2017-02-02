@@ -120,7 +120,7 @@ BoothAlumDevStaff(82) = "Young, K"
 If DebugOn Then Debug.Print "  Array Created: " & C.TimeElapsed & " ms"
 
 ' Call the FormatInCell sub
-   FormatInCell RngData:=Selection, ArraySeek:=BoothAlumDevStaff, isBold:=True
+   FormatInCell rngData:=Selection, ArraySeek:=BoothAlumDevStaff, isBold:=True
 
 If DebugOn Then
     Debug.Print "  Format In Cell: " & C.TimeElapsed & " ms"
@@ -211,7 +211,7 @@ If DebugOn Then Debug.Print "  Highlight Cols: " & C.TimeElapsed & " ms"
     ' Look for salutations with the double apostrophe issue
         ActiveSheet.rows(1).Find("SALUTATION").Select
         myArray = Array("''")
-        FormatInCell RngData:=Selection, ArraySeek:=myArray, isBold:=True, isColor:=True
+        FormatInCell rngData:=Selection, ArraySeek:=myArray, isBold:=True, isColor:=True
     
 If DebugOn Then Debug.Print "  Double Apostrophe: " & C.TimeElapsed & " ms"
     
@@ -249,7 +249,7 @@ DebugOptions
 
 ' Variables
 Dim rowCount As Long
-Dim RngData As Range
+Dim rngData As Range
 Dim rngCell As Range
 Dim i As Long
 Dim WS As Worksheet
@@ -280,17 +280,17 @@ If DebugOn Then Debug.Print "  Row Counts: " & C.TimeElapsed & " ms"
 If DebugOn Then Debug.Print "  Find Phone List: " & C.TimeElapsed & " ms"
  
 ' Puts the Hyperlink formula into each column in News
-    Set RngData = ActiveSheet.Range("N2", "N" & rowCount - 1)
+    Set rngData = ActiveSheet.Range("N2", "N" & rowCount - 1)
     ' Iterate through each row after the header
     i = 2
-    For Each rngCell In RngData
+    For Each rngCell In rngData
         ActiveSheet.Hyperlinks.Add Anchor:=Range("n" & i), Address:= _
         Range("l" & i).Value, TextToDisplay:=Range("j" & i).Value
         i = i + 1
     Next
     ' Special formatting (green) of key words within the hyperlink, if any
     Cells.Find("News", , xlValues, xlWhole).EntireColumn.Select
-    FormatInCell RngData:=Selection, ArraySeek:=Array("trustee", "trustees", "board of "), isBold:=True, isColor:=True, Color:=RGB(0, 176, 80)
+    FormatInCell rngData:=Selection, ArraySeek:=Array("trustee", "trustees", "board of "), isBold:=True, isColor:=True, Color:=RGB(0, 176, 80)
     
 If DebugOn Then Debug.Print "  Hyperlinks: " & C.TimeElapsed & " ms"
     
