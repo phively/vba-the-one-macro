@@ -57,22 +57,27 @@ Sub GreenSheetFormat()
     FieldsToKeep(13) = "Kellogg Annual Giving Year"
     FieldsToKeep(14) = "LIFETIME_GIVING_TOTAL"
     FieldsToKeep(15) = "PM"
-    FieldsToKeep(16) = "Prefix"
-    FieldsToKeep(17) = "FIRST"
-    FieldsToKeep(18) = "Middle_Name"
-    FieldsToKeep(19) = "LAST"
 ' *****************************************
 ' ******** DO NOT EDIT BELOW HERE *********
 ' *****************************************
 
+''' Macro and Excel settings
 ' Debug printing, if set in TheOneMacro_Core
     DebugOptions
-
+' Profiling
+    If DebugOn Then
+        Dim C As CTimer
+        Set C = New CTimer
+        C.StartCounter
+        Debug.Print "*GreenSheet Start: " & 0 & " ms"
+    End If
 ' Optimize Excel settings to speed up the macro
     Dim Reset As Boolean
     Reset = Application.ScreenUpdating
     SaveCurrentSettings bEvents:=bEvents, bAlerts:=bAlerts, CalcMode:=CalcMode, bScreen:=bScreen, Reset:=Reset
+' Comment out the next line when debugging to see the operations as they're carried out
     RuntimeOptimization bEvents:=bEvents, bAlerts:=bAlerts, CalcMode:=CalcMode, bScreen:=bScreen
+
 
 ''' Variables
 Dim rowCount As Long
@@ -82,6 +87,7 @@ Dim allCols As Variant
 Dim allPMs As Variant
 Dim thisOne As Variant
 Dim colNum As Integer
+Dim PMsCol As Range
 
 ' Initialize counts
 LastUsedRow rng:=ActiveSheet.Range("A:A"), row:=rowCount
@@ -91,14 +97,19 @@ LastUsedCol rng:=ActiveSheet.Range("1:1"), col:=colCount
 ActiveSheet.Copy Before:=ActiveSheet
 ActiveSheet.Name = "WorkingSheet"
 
+
 ''' Delete unneeded columns
 ' First, store the header names
 allCols = Range(Cells(1, 1), Cells(1, colCount)).Value
 ' Iterate through each named column; if not in FieldsToKeep then delete
 For Each thisOne In allCols
-    If DebugOn Then Debug.Print thisOne
+    'If DebugOn Then Debug.Print thisOne
     If Not InArray(thisOne, FieldsToKeep) Then DeleteCols myArr:=Array(thisOne)
 Next thisOne
+
+' Profiling
+    If DebugOn Then Debug.Print "  Delete columns: " & C.TimeElapsed & " ms"
+
 
 ''' Delete the PMs we don't need to see
 ' Create a worksheet to store the unique values
@@ -106,28 +117,45 @@ Sheets.Add.Name = "CurrUniqueList4Macro"
 ' Then, find and select the PM column
 Worksheets("WorkingSheet").Activate
 colNum = Cells.Find(PMColName, , xlValues, xlWhole).EntireColumn.SpecialCells(xlCellTypeConstants).Column
+Set PMsCol = ActiveSheet.Range(Cells(1, colNum), Cells(rowCount, colNum))
 ' Next, de-dupe the column on the new worksheet
     With Worksheets("CurrUniqueList4Macro")
-        Range(Cells(2, colNum), Cells(rowCount, colNum)).AdvancedFilter xlFilterCopy, , _
+        PMsCol.AdvancedFilter xlFilterCopy, , _
          Worksheets("CurrUniqueList4Macro").Range("A1"), True
         'Set a range variable to the unique list, less the heading.
         Set rngData = .Range("A2", .Range("A" & rowCount).End(xlUp))
     End With
 ' Finally, store these individuals in allPMs
 allPMs = Worksheets("CurrUniqueList4Macro").UsedRange.Value
+' Sort by PM Column name; this GREATLY reduces the amount of time it takes to delete rows
+ActiveSheet.UsedRange.Sort key1:=PMsCol, Header:=xlYes
 ' Last, iterate through each PM name; if not in KSMProspectManagers then delete
 For Each thisOne In allPMs
-    If DebugOn Then Debug.Print thisOne
+    'If DebugOn Then Debug.Print thisOne
     If Not InArray(thisOne, KSMProspectManagers) Then DeleteRows myArr:=Array(thisOne), myCol:=PMColName, rows:=rowCount, cols:=colCount
 Next thisOne
 ' Clean up by deleting CurrUniqueList4Macro
 Worksheets("CurrUniqueList4Macro").Delete
 
+' Profiling
+    If DebugOn Then Debug.Print "  Delete rows: " & C.TimeElapsed & " ms"
 
 
+''' Split the file up into tabs
+SingleColumnToTab CWS:=Worksheets("WorkingSheet"), rngData:=PMsCol, outputFormat:="T", _
+    formatOutput:=True, parseSeparately:=True, parseBlanks:=False, overwriteWS:=True
+' Clean up by deleting the temporary WorkingSheet tab
 Worksheets("WorkingSheet").Delete
 
+' Profiling
+    If DebugOn Then Debug.Print "  Create tabs: " & C.TimeElapsed & " ms"
+
+
+''' Cleanup
 ' Switch Excel settings back to initial values
     If Reset Then RuntimeOptimizationOff bEvents:=bEvents, bAlerts:=bAlerts, CalcMode:=CalcMode, bScreen:=bScreen
+
+' Profiling
+    If DebugOn Then Debug.Print "*GreenSheet End: " & C.TimeElapsed & " ms"
 
 End Sub
