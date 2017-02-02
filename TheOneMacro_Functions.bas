@@ -51,3 +51,11 @@ Sub Color2RGB(ByVal i_Color As Long, _
   o_B = i_Color Mod 256
 End Sub
 
+' Checks if element exists in a provided array
+' Thanks to http://www.excelforum.com/showthread.php?t=377174
+
+Function InArray(x, StringSetElementsAsArray)
+    InArray = InStr(1, Chr$(0) & Join(StringSetElementsAsArray, Chr$(0)) & Chr$(0), _
+    Chr$(0) & x & Chr$(0), vbTextCompare) > 0
+End Function
+

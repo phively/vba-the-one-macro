@@ -6,7 +6,11 @@ Sub GreenSheetFormat()
 ' Started by Paul Hively on 1/31/2017
 ' Automatic ColumnsToTabs for gift officer "Green Sheet" reports
 
-' ************ EDIT BELOW HERE ************
+' *****************************************
+' *********** EDIT BELOW HERE *************
+' *****************************************
+' Name of the prospect managers column
+    Dim PMColName As String
 ' Prospect managers dimension. The higher number on the next line MUST be >= the number of staff members
     Dim KSMProspectManagers(1 To 20) As String
 ' Fields dimension; names of the columns that will be kept in the formatted spreadsheet
@@ -21,6 +25,8 @@ Sub GreenSheetFormat()
         FieldsToKeep(j) = "NOT_INITIALIZED"
     Next j
 
+' ************ PROSPECT MANAGER COLUMN NAME
+    PMColName = "PM"
 ' ************ PROSPECT MANAGERS -- ADD NAMES BELOW IN SAME FORMAT
     KSMProspectManagers(1) = "Ms. Erin Varga"
     KSMProspectManagers(2) = "Ms. Lisa Guynn"
@@ -55,8 +61,73 @@ Sub GreenSheetFormat()
     FieldsToKeep(17) = "FIRST"
     FieldsToKeep(18) = "Middle_Name"
     FieldsToKeep(19) = "LAST"
-' ************ DO NOT EDIT BELOW HERE ************
+' *****************************************
+' ******** DO NOT EDIT BELOW HERE *********
+' *****************************************
+
+' Debug printing, if set in TheOneMacro_Core
+    DebugOptions
+
+' Optimize Excel settings to speed up the macro
+    Dim Reset As Boolean
+    Reset = Application.ScreenUpdating
+    SaveCurrentSettings bEvents:=bEvents, bAlerts:=bAlerts, CalcMode:=CalcMode, bScreen:=bScreen, Reset:=Reset
+    RuntimeOptimization bEvents:=bEvents, bAlerts:=bAlerts, CalcMode:=CalcMode, bScreen:=bScreen
+
+''' Variables
+Dim rowCount As Long
+Dim colCount As Long
+' For column/row deletion
+Dim allCols As Variant
+Dim allPMs As Variant
+Dim thisOne As Variant
+Dim colNum As Integer
+
+' Initialize counts
+LastUsedRow rng:=ActiveSheet.Range("A:A"), row:=rowCount
+LastUsedCol rng:=ActiveSheet.Range("1:1"), col:=colCount
+
+' Copy data to a new workbook
+ActiveSheet.Copy Before:=ActiveSheet
+ActiveSheet.Name = "WorkingSheet"
+
+''' Delete unneeded columns
+' First, store the header names
+allCols = Range(Cells(1, 1), Cells(1, colCount)).Value
+' Iterate through each named column; if not in FieldsToKeep then delete
+For Each thisOne In allCols
+    If DebugOn Then Debug.Print thisOne
+    If Not InArray(thisOne, FieldsToKeep) Then DeleteCols myArr:=Array(thisOne)
+Next thisOne
+
+''' Delete the PMs we don't need to see
+' Create a worksheet to store the unique values
+Sheets.Add.Name = "CurrUniqueList4Macro"
+' Then, find and select the PM column
+Worksheets("WorkingSheet").Activate
+colNum = Cells.Find(PMColName, , xlValues, xlWhole).EntireColumn.SpecialCells(xlCellTypeConstants).Column
+' Next, de-dupe the column on the new worksheet
+    With Worksheets("CurrUniqueList4Macro")
+        Range(Cells(2, colNum), Cells(rowCount, colNum)).AdvancedFilter xlFilterCopy, , _
+         Worksheets("CurrUniqueList4Macro").Range("A1"), True
+        'Set a range variable to the unique list, less the heading.
+        Set rngData = .Range("A2", .Range("A" & rowCount).End(xlUp))
+    End With
+' Finally, store these individuals in allPMs
+allPMs = Worksheets("CurrUniqueList4Macro").UsedRange.Value
+' Last, iterate through each PM name; if not in KSMProspectManagers then delete
+For Each thisOne In allPMs
+    If DebugOn Then Debug.Print thisOne
+    If Not InArray(thisOne, KSMProspectManagers) Then DeleteRows myArr:=Array(thisOne), myCol:=PMColName, rows:=rowCount, cols:=colCount
+Next thisOne
+' Clean up by deleting CurrUniqueList4Macro
+Worksheets("CurrUniqueList4Macro").Delete
 
 
+
+Worksheets("WorkingSheet").Delete
+
+' Switch Excel settings back to initial values
+    If Reset Then RuntimeOptimizationOff bEvents:=bEvents, bAlerts:=bAlerts, CalcMode:=CalcMode, bScreen:=bScreen
 
 End Sub
