@@ -519,7 +519,7 @@ End If
 
 ' Get rid of any phantom extra columns
 LastUsedCol rng:=ActiveSheet.Range("1:1"), col:=nCols
-ActiveSheet.Range(Cells(1, nCols + 1), Cells(1, ActiveSheet.Cells(1, 12).End(xlToRight).Column)).EntireColumn.Delete
+ActiveSheet.Range(Cells(1, nCols + 1), Cells(1, ActiveSheet.Cells(1, nCols).End(xlToRight).Column)).EntireColumn.Delete
 ActiveSheet.UsedRange
 
 ' If formatting with PrintSettings, make sure everything fits now
