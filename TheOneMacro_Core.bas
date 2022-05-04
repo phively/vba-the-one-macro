@@ -12,6 +12,11 @@ Public bScreen As Boolean
 ' Variables to be used in UserForms
 Public UserFormLong As Long
 
+Private Sub Workbook_Open()
+' Written by Paul Hively on 5/4/2022: set calculation mode to xlAutomatic when opening Excel
+Application.Calculation = xlCalculationAutomatic
+End Sub
+
 Public Sub DebugOptions()
     DebugOn = True ' If set to true, debug info will display in the Immediate window
 End Sub
