@@ -162,7 +162,7 @@ If UserForm_PrintSettings.Tag = "RanMacro" Then
         If orient = xlLandscape Then width = 14 - 2 * UserForm_PrintSettings.tLeftRight
     End If
     If UserForm_PrintSettings.o11x17 = True Then
-        ActiveSheet.PageSetup.PaperSize = xlPaper11x17
+        ActiveSheet.PageSetup.PaperSize = xlPaperTabloid
         If orient = xlPortrait Then width = 11 - 2 * UserForm_PrintSettings.tLeftRight
         If orient = xlLandscape Then width = 17 - 2 * UserForm_PrintSettings.tLeftRight
     End If
