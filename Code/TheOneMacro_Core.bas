@@ -220,6 +220,25 @@ ErrNonNum:
 
 End Sub
 
+Sub PrependZeros()
+
+' Written by Paul Hively on 2023-03-16
+' Convert column type to text and prepend 0 until it's length 10
+
+' Declarations
+Const zerosFormat As String = "0000000000"
+Dim thisColumn As Range
+
+' Loop through columns in range
+For Each thisColumn In Selection.Columns
+    Range(thisColumn.EntireColumn.End(xlUp), thisColumn.EntireColumn.End(xlDown)).Select
+    ' Format as number, then prepend 0
+    Selection.NumberFormat = "@"
+    Selection = Evaluate("index(text(" & Selection.Address & ", """ & zerosFormat & """),)")
+Next
+
+End Sub
+
 Sub ColumnsToTabs()
 
 ' Written by Paul Hively on 12/3/2012; Last updated 6/3/2013
